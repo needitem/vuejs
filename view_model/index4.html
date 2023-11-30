@@ -1,0 +1,32 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <label>여행하고 싶은 도시:</label>
+        <input v-model="searchCity"  type="text" />
+        <ul>
+            <li v-for="city in filteredCities">{{ city }}</li>
+        </ul>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript"> 
+        var vm = new Vue({
+            el: '#app',
+            data : {
+                searchCity:'',
+                cities: ['Seoul','Paris', 'Seattle', 'Chicago', 'New York', 'Rome', 'Praha', 'Venezia', 'Budapest']
+            },
+            computed: {
+                filteredCities() {
+                    return this.cities.filter(item => item.match(this.searchCity.toUpperCase()))
+                }
+            }
+        })
+    </script>
+</body>
+</html>

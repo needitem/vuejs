@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+  // dom (= VIEW 계층 )
+  let appDom = document.querySelector('#app');
+  
+  // dom 과 관련된 js Object ( = Model 계층 )
+  let appObj = {}; // appDom 과 관련된 순수한 Javascript Object
+
+  // 이 createApp 메소드가 ViewModel 이 하려는 행위의 핵심이다.
+  function createApp(dom) {
+    
+    let relatedObject = {};
+    
+    // appObj 의 속성 재정의
+    Object.defineProperty(relatedObject, 'str', {
+      // str 프로퍼티 조회 시 동작
+      get: function () {
+        console.log('reading str property...');
+        return this._str || '';
+      },
+      // str 프로퍼티 세팅 시 동작
+      set: function (setVal) {
+        console.log('setting str property to... ' + setVal);
+        dom.innerHTML = this._str = setVal;
+      }
+    });
+    
+    return relatedObject;
+  }
+  
+  appObj = createApp(appDom);
+</script>
+</body>
+</html>

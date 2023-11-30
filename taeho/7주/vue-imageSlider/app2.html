@@ -1,0 +1,51 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+    <div id="image-slider">
+        <p>
+            <a @click="prev">Previous</a> || <a @click="next">Next</a>
+        </p>
+        <img
+            :src="images[currentNumber % images.length]"
+            v-on:mouseover="stopRotation"
+            v-on:mouseout="startRotation"
+        />
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript">
+        new Vue({
+            el: '#image-slider',
+            data() {
+                return {
+                    images: ['http://placehold.it/460x300?text=image_0', 'http://placehold.it/460x300?text=image_1', 'http://placehold.it/460x300?text=image_2'],
+                    currentNumber: 0,
+                    timer: null
+                }
+            },        
+            created: function () {
+                this.startRotation();
+            },            
+            methods: {
+                startRotation: function() {
+                    this.timer = setInterval(this.next, 3000);
+                },           
+                stopRotation: function() {
+                    clearTimeout(this.timer);
+                    this.timer = null;
+                },            
+                next: function() {
+                    this.currentNumber += 1;
+                },
+                prev: function(){
+                    this.currentNumber -= 1;
+                }
+            }           
+        });
+    </script>
+</body>
+</html>
