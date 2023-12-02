@@ -2,37 +2,39 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-const express = require('express');
-//find user in db
 const member = require('./member.model.js');
 
+require('dotenv').config();
 module.exports = (app) => {
-
-    app.use(cookieParser('passportExample'));
+    app.use(cookieParser(process.env.COOKIE_SECRET));
     app.use(session({
-        resave: false,              // 수정 false->true
-        saveUninitialized: true,   // 수정 false->true
-        secret: 'passportExample',
-        //        proxy: true,//추가
+        resave: false,
+        saveUninitialized: false,
+        secret: process.env.COOKIE_SECRET,
         cookie: {
             httpOnly: true,
-            secure: true,           //true이면 https에서만 올바르게 동작 ㅎㅎ
+            secure: false,
             maxAge: 1000 * 60 * 30,
-            sameSite: "none",
-        }
+        },
     }));
 
     app.use(passport.initialize());
     app.use(passport.session());
 
     passport.serializeUser((user, done) => { // Strategy 성공 시 호출됨
-        console.log('serializeUser');
-        done(null, user); // 여기의 user가 deserializeUser의 첫 번째 매개변수로 이동
+        done(null, user.id);
     });
 
-    passport.deserializeUser((user, done) => { // 매개변수 user는 serializeUser의 done의 인자 user를 받은 것
+    passport.deserializeUser((id, done) => { // 매개변수 id는 req.session.passport.user에 저장된 값
         console.log('deserializeUser');
-        done(null, user); // 여기의 user가 req.user가 됨
+        member.findOne({ id: id })
+            .then((user) => {
+                done(null, user); // req.user에 저장
+            })
+            .catch((err) => {
+                done(err);
+            }   
+        );
     });
 
     passport.use(new LocalStrategy(
@@ -40,34 +42,28 @@ module.exports = (app) => {
             usernameField: 'id',
             passwordField: 'pw',
             session: true,
-            passReqToCallback: false,
+            passReqToCallback: true,
+
         },
-        async (id, pw, done) => {
+        async (req, id, pw, done) => {   
             try {
                 const user = await member.findOne({ id: id });
                 if (!user) {
                     return done(null, false, { message: 'Incorrect username.' });
                 }
-                if(user.pw != pw){
+                if (user.pw != pw) {
                     return done(null, false, { message: 'Incorrect password.' });
                 }
-                else{
+                else {
                     return done(null, user, { message: 'login success' })
                 }
-                
+
             }
             catch (err) {
                 console.log(err);
-                done(err);
+                return done(err, false, { message: 'Error' });
             }
         }
 
     ));
-
-    app.post('/members', passport.authenticate('local') , (req, res) => {
-        console.log('login success');
-        res.send('200');
-        
-        
-    });
 }

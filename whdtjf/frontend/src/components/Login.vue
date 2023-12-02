@@ -45,6 +45,9 @@ export default {
             urlinfo: 'http://localhost:8000'
         }
     },
+    created() {
+
+    },
 
     methods: {
         submitForm() {
@@ -53,21 +56,22 @@ export default {
             saveData.pw = this.contactInfo.pw;
 
             try {
-                axios.post(this.urlinfo + '/members', qs.stringify(saveData), {
+                axios.post(this.urlinfo + '/Login', qs.stringify(saveData), {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
                     withCredentials: true
                 }).then((response) => {
-                    if (response.data == '200') {
-                        this.$router.push({ name: 'Home' });
-                    } else if (response.data == '1') {
-                        alert('아이디 또는 비밀번호가 일치하지 않습니다.');
-                    } else if (response.data == '2') {
-                        alert('접근제한 페이지');
-                    } else {
-                        alert('로그인 실패');
+                    if(response.status == 200)
+                    {
+                        alert("로그인 성공");
+                        this.$router.push('/home');
                     }
+                    else
+                    {
+                        alert("아이디 또는 비밀번호가 틀렸습니다.");
+                    }
+
                 }).catch((error) => {
                     console.log(error);
                 })
@@ -77,6 +81,8 @@ export default {
                 console.log(err);
             }
         },
+
+
     }
 }
 </script>

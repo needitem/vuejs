@@ -7,11 +7,10 @@ const webSocket = require('./socket.js'); //web socket 설정
 app.use(express.json());  //json 형식 파싱하기
 app.use(express.urlencoded({ extended: true })); //urlencoded 형식 파싱하기
 app.use(cors({
-    origin: 'http://localhost:8080', //요청 주소와 같게 설정
-    credentials: true, //요청 헤더와 같게 설정
-    optionsSuccessStatus: 200 //응답 상태 200으로 설정
-
-})); //cors 적용
+    origin: 'http://localhost:8080', // Set to the exact origin
+    credentials: true,
+    optionsSuccessStatus: 200
+}));
 
 const dbconfig = require("./db.js");
 const mongoose = require('mongoose');
@@ -23,13 +22,11 @@ mongoose.connect(dbconfig.url, { useNewUrlParser:true})
     console.log("MongoDB에 연결되지 않았습니다.", err);
 });
 
-require('./passport-session.js')(app);
-
 app.get('/', (req, res) => { 
     //log req db list
     res.json({"message": "여러분들을 환영합니다."}); 
   })
-// require('./passport-session.js')(app);
+require('./passport-session.js')(app);
 
 require('./router.js')(app);
 var port = process.env.PORT || 8000;  //서버 포트(port) 설정
