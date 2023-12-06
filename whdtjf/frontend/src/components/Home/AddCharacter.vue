@@ -38,7 +38,7 @@
               </v-flex>
 
               <v-flex xs12>
-                <v-text-field label="homeworld" v-model="charInfo.Homeworld" required></v-text-field>
+                <v-text-field label="homeworld" v-model="charInfo.HomeWorld" required></v-text-field>
               </v-flex>
 
               <v-flex xs12>
@@ -82,7 +82,7 @@ export default {
         Story: null,
         Realname: null,
         IsStarred: false,
-        Homeworld: null,
+        HomeWorld: null,
         TacticalSkill: null,
         PassiveSkill: null,
         UltimitSkill: null,
@@ -110,7 +110,7 @@ export default {
         IsStarred: false,
         Story: this.charInfo.Story,
         Realname: this.charInfo.Realname,
-        Homeworld: this.charInfo.Homeworld,
+        HomeWorld: this.charInfo.HomeWorld,
         TacticalSkill: this.charInfo.TacticalSkill,
         PassiveSkill: this.charInfo.PassiveSkill,
         UltimitSkill: this.charInfo.UltimitSkill,

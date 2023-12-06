@@ -7,10 +7,11 @@ const webSocket = require('./socket.js'); //web socket 설정
 app.use(express.json());  //json 형식 파싱하기
 app.use(express.urlencoded({ extended: true })); //urlencoded 형식 파싱하기
 app.use(cors({
-    origin: 'http://localhost:8080', // Set to the exact origin
+    origin: ['http://localhost:8080', 'http://localhost:8000'], // Set to the exact origin
     credentials: true,
     optionsSuccessStatus: 200
 }));
+
 
 const dbconfig = require("./db.js");
 const mongoose = require('mongoose');
@@ -21,10 +22,10 @@ mongoose.connect(dbconfig.url, { useNewUrlParser:true})
 }).catch( err => {
     console.log("MongoDB에 연결되지 않았습니다.", err);
 });
-
+app.use(require('connect-history-api-fallback')()); //history mode 사용시 필요한 설정
+app.use(express.static('public')); //정적 파일 제공
 app.get('/', (req, res) => { 
-    //log req db list
-    res.json({"message": "여러분들을 환영합니다."}); 
+
   })
 require('./passport-session.js')(app);
 

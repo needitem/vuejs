@@ -6,18 +6,33 @@ module.exports = (app) => {
   const character = require('./charinfo.controller.js');
 
   const authenticateUser = (req, res, next) => {
-    const session = req.sessionStore.sessions;
-    const parsedSession = JSON.parse(session[Object.keys(session)[0]]);
-    console.log(parsedSession);
-    if (parsedSession.passport) {
-      console.log('authenticated');
-      return next();
+    // const session = req.sessionStore.sessions;
+    // const parsedSession = JSON.parse(session[Object.keys(session)[0]]);
+    // if (parsedSession.passport) {
+    //   console.log('authenticated');
+    //   return next();
+    // }
+    // else {
+    //   console.log('not authenticated');
+    //   return res.sendStatus(401);
+    // }
+    try{
+      if(req.isAuthenticated()){
+        console.log('from authenticateUser func. authenticated');
+        return next();
+      }
+      else{
+        console.log('from authenticateUser func. not authenticated');
+        return res.sendStatus(401);
+      }
+
     }
-    else {
-      console.log('not authenticated');
-      return res.sendStatus(401);
+    catch(err){
+      console.log(err);
+      return next(err);
     }
   }
+
 
   app.get('/members', members.findAll);
   app.get('/members/:id', members.findOne);
@@ -35,12 +50,18 @@ module.exports = (app) => {
   app.get('/Auth', function (req, res, next) {
     try{
       if(req.isAuthenticated()){
-        console.log('authenticated');
-        console.log(req.session);
-        return res.sendStatus(200);
+        console.log('from /auth: authenticated');
+        return res.send({
+          status: 200,
+          name: req.session.passport.user,
+        });
       }
       else{
-        return res.sendStatus(401);
+        console.log('from /auth: not authenticated');
+        return res.send({
+          status: 201,
+          name: null,
+        });
       }
     }
     catch(err){
@@ -49,7 +70,7 @@ module.exports = (app) => {
     }
 
   });
-
+  
   app.post('/Login', (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
       if (err) {
@@ -72,7 +93,10 @@ module.exports = (app) => {
             console.log(err);
             return next(err);
           }
-          return res.sendStatus(200);
+          return res.send({
+            status: 200,
+            name: req.session.passport.user.id,
+          });
         });
       });
     })(req, res, next);
@@ -80,13 +104,16 @@ module.exports = (app) => {
   });
 
   app.get('/Logout', (req, res) => {
-    console.log(req.session);
+    res.clearCookie('connect.sid');
     req.session.destroy((err) => {
       if (err) {
         console.log(err);
         return next(err);
       }
-      return res.sendStatus(200);
+      return res.send({
+        status: 200,
+        name: null,
+      });
     });
   });
 

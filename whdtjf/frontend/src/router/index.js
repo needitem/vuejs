@@ -5,6 +5,8 @@ import About from '../views/About.vue'
 import Register from '../components/Register'
 import Login from '../components/Login'
 import AddCharacter from '../components/Home/AddCharacter'
+import AboutCharacter from '../components/Home/AboutCharacter'
+import Profile from '../views/Profile.vue'
 
 Vue.use(VueRouter)
 
@@ -37,6 +39,12 @@ const routes = [
   {
     path: '/AddCharacter', name: 'AddCharacter', component: AddCharacter
   },
+  {
+    path: '/detail/:id', name: 'detail', component: AboutCharacter
+  },
+  {
+    path: '/profile', name: 'profile', component: Profile
+  }
 ]
 
 const router = new VueRouter({

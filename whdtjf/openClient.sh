@@ -1,2 +1,2 @@
 cd ./frontend
-npm run serve
+npm run build

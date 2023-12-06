@@ -8,7 +8,7 @@ require('dotenv').config();
 module.exports = (app) => {
     app.use(cookieParser(process.env.COOKIE_SECRET));
     app.use(session({
-        resave: false,
+        resave: true,
         saveUninitialized: false,
         secret: process.env.COOKIE_SECRET,
         cookie: {

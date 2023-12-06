@@ -1,67 +1,59 @@
 <template>
   <div class="about">
     <v-container fluid>
-      <v-col>
-        <v-btn v-if="status != 200" v-on:click="login()" to="/Login"> Sign In </v-btn>
-        <v-btn v-if="status != 200" v-on:click="register()" to="/Register"> Sign Up </v-btn>
-        <v-btn v-else v-on:click="logout()"> Sign Out </v-btn>
-      </v-col>
       <v-row>
         <v-col>
           <search-user/>
         </v-col>
       </v-row>
+      <v-row>
+        <v-col>
+          <predator/>
+        </v-col>
+        <v-col>
+          <player-stat/>
+        </v-col>
+      </v-row>
+      <v-col>
+          <current-map/>
+        </v-col>
     </v-container>
   </div>
 </template>
 <script>
 import PlayerStat from '@/components/User/PlayerStat.vue';
 import SearchUser from '@/components/User/SearchUser.vue';
-import axios from 'axios';
+import MatchHistory from '@/components/User/MatchHistory.vue';
+import CurrentMap from '../components/User/CurrentMap.vue'
+import Predator from '@/components/User/Predator.vue';
+
 export default {
   name: 'App',
   components: {
     PlayerStat,
-    SearchUser
+    SearchUser,
+    MatchHistory,
+    CurrentMap,
+    Predator,
     
   },
   data: () => ({
-    status: undefined,
   }),
   created() {
-    this.checkAuth();
   },
-  return:
-  {
+  methods: {
   },
-  methods:{
-    checkAuth() {
-      try {
-        axios.get('http://localhost:8000/Auth', {
-          withCredentials: true
-        }).then((response) => {
-          this.status = response.status;
-        })
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
-    logout() {
-      try {
-        axios.get('http://localhost:8000/Logout', {
-          withCredentials: true
-        }).then((response) => {
-          if (response.status == 200){
-            alert("로그아웃 성공");
-            this.status = undefined;
-          }
-        })
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
-  }
 }
 </script>
+
+<style scoped>
+.about {
+  background-color: black;
+  color: white;
+}
+
+.about .v-btn {
+  background-color: black !important;
+  color: white !important;
+}
+</style>

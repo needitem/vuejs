@@ -66,6 +66,7 @@ export default {
                     {
                         alert("로그인 성공");
                         this.$router.push('/home');
+                        location.reload();
                     }
                     else
                     {
@@ -80,6 +81,9 @@ export default {
             catch (err) {
                 console.log(err);
             }
+
+            //redirect to home
+            
         },
 
 

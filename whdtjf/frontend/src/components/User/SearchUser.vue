@@ -1,32 +1,13 @@
 <template>
     <div id="player-stat">
-        <v-card>
-            <v-card-title>
-                <v-icon>mdi-account</v-icon>
-                <span>플레이어 정보</span>
-            </v-card-title>
-            <v-card-text>
-                <v-container>
-                    <v-layout>
-                        <v-flex xs12 sm6 offset-sm3>
-                            <v-text-field label="플레이어 이름" v-model="playerName"></v-text-field>
-                        </v-flex>
-                    </v-layout>
-                    <v-layout>
-                        <v-flex xs12 sm6 offset-sm3>
-                            <v-select :items="platforms" label="플랫폼" v-model="platform"></v-select>
-                        </v-flex>
-                    </v-layout>
-                </v-container>
-            </v-card-text>
-            <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text type="submit" v-on:click="updateUserInfo()">검색</v-btn>
-            </v-card-actions>
-        </v-card>
+        <div class="search-bar">
+            <input v-model="playerName" type="text" placeholder="Enter player name">
+            <v-spacer></v-spacer>
+            <button @click="nameToUID">Search</button>
+        </div>
+        <!-- Rest of your template -->
     </div>
 </template>
-
 <script>
 const my_api_key = "5bf08b15962418a494ff6a2c40f4c10b";
 //https://api.mozambiquehe.re/bridge?auth=YOUR_API_KEY&player=PLAYER_NAME&platform=PLATFORM
@@ -39,50 +20,71 @@ export default {
     data() {
         return {
             playerName: null,
-            platform: null,
+            platform: 'PC',
+            UID: null,
+            PID: null,
             platforms: [
                 'PC',
                 'X1',
-                'PS4',
-                'SWITCH'
+                'PS4'
             ],
-
-            playerData:{
-                level: null,
-                kills: null,
-                kdr: null,
-                rankScore: null,
-                rankName: null,
-                rankDiv: null,
-                rankImg: null,
-
-            }
         };
     },
+    created() {
+        //load userData      
+        this.$bus.$on('update-platform', (data) => {
+            this.platform = data.platform;
+        });
+
+    },
     methods: {
-        updateUserInfo() {
-            axios.get(`https://api.mozambiquehe.re/bridge?auth=${my_api_key}&player=${this.playerName}&platform=${this.platform}`)
+        nameToUID() {
+            //https://api.mozambiquehe.re/nametouid?auth=YOUR_API_KEY&player=PLAYER_NAME&platform=PLATFORM
+            axios.get(`https://api.mozambiquehe.re/nametouid?auth=${my_api_key}&player=${this.playerName}&platform=${this.platform}`)
                 .then((res) => {
-                    this.userData = res.data;
-                    this.playerData.level = this.userData.global.level;
-                    this.playerData.kills = this.userData.total.kills.value;
-                    this.playerData.kdr = this.userData.total.kd.value;
-                    this.playerData.rankScore = this.userData.global.rank.rankScore;
-                    this.playerData.rankName = this.userData.global.rank.rankName;
-                    this.playerData.rankDiv = this.userData.global.rank.rankDiv;
-                    this.playerData.rankImg = this.userData.global.rank.rankImg;
-                
+                    this.UID = res.data.uid;
+                    this.PID = res.data.pid;
+                    this.playerName = res.data.name;
+                    this.$bus.$emit('update-user-info', {
+                        UID: this.UID,
+                        PID: this.PID,
+                        playerName: this.playerName,
+                        platform: this.platform,
+                    });
                 })
                 .catch((err) => {
-                    //player not found
-
                     alert('에러 발생: ' + err); //에러 발생
                 });
-
-            
         },
     },
 };
 
 
 </script>
+<style scoped>
+.error {
+  color: red;
+}
+
+.search-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.search-bar:hover {
+  box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+}
+
+.search-bar>* {
+  margin-right: 2px;
+}
+
+.search-bar select {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+</style>

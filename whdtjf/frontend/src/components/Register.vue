@@ -85,11 +85,14 @@ export default {
           //console.log(res.data); //성공시
           this.items = res.data;
           console.log(this.items);
+          this.$router.push('/home');
+          location.reload();
         }).
         catch((err) => {
           alert('에러 발생: ' + err); //에러 발생
         });
       }
+      
     },
   }
 }
